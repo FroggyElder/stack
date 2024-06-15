@@ -1,7 +1,7 @@
 #include "stack.h"
 
 int main () {
-    struct stack_node* list0 = stackInit();
+    struct stack* list0 = stackInit();
 
     int dec = 114514;
     while(dec>0) {
@@ -9,7 +9,9 @@ int main () {
         dec>>=4;
     }
 
-    while(list0->next!=NULL) {
+    stackReverse(list0);
+
+    while(!stackIsEmpty(list0)) {
         int num = stackPop(list0);
         if (num<=9) 
             printf("%d",num);

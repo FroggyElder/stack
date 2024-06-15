@@ -12,16 +12,22 @@ struct stack_node {
     struct stack_node* next;
 };
 
-struct stack_node* stackInit ();
+struct stack {
+    struct stack_node* top;
+};
 
-bool stackIsEmpty (struct stack_node* head);
+struct stack* stackInit ();
 
-bool stackPush (struct stack_node* head,STACK_ELEM_TYPE data);
+bool stackIsEmpty (struct stack* top);
 
-STACK_ELEM_TYPE stackPop (struct stack_node* head);
+bool stackPush (struct stack* stack,STACK_ELEM_TYPE data);
 
-STACK_ELEM_TYPE stackTop (struct stack_node* head);
+STACK_ELEM_TYPE stackTop (struct stack* stack);
 
-bool stackDestroy (struct stack_node* head);
+STACK_ELEM_TYPE stackPop (struct stack* stack);
+
+bool stackDestroy (struct stack* stack);
+
+void stackReverse (struct stack* stack);
 
 #endif /*STACK_H*/

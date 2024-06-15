@@ -1,26 +1,27 @@
 #include "stack.h"
 
-struct stack_node* stackInit () {
-    struct stack_node* new_head = (struct stack_node*)malloc(sizeof(struct stack_node));
-    if(new_head==NULL) {
+struct stack* stackInit () {
+    struct stack* new_stack = (struct stack*)malloc(sizeof(struct stack));
+    if (new_stack==NULL) {
         perror(__func__);
         return NULL;
     }
 
-    new_head->next=NULL;
-    return new_head;
+    new_stack->top = NULL;
+
+    return new_stack;
 }
 
-bool stackIsEmpty (struct stack_node* head) {
-    if(head==NULL) {
+bool stackIsEmpty (struct stack* stack) {
+    if(stack==NULL) {
         printf("%s,%d,trying to empty a NULL\n",__func__,__LINE__);
         return true;
     }
-    return head->next==NULL;
+    return stack->top==NULL;
 }
 
-bool stackPush (struct stack_node* head,STACK_ELEM_TYPE data) {
-    if(head==NULL) {
+bool stackPush (struct stack* stack,STACK_ELEM_TYPE data) {
+    if(stack==NULL) {
         printf("invalid stack to push\n");
         return false;
     }
@@ -30,55 +31,58 @@ bool stackPush (struct stack_node* head,STACK_ELEM_TYPE data) {
         perror(__func__);
         return false;
     }
-
-    new_node->next=head->next;
-    head->next=new_node;
     new_node->data = data;
+
+    new_node->next=stack->top;
+    stack->top=new_node;
 
     return true;
 }
 
-STACK_ELEM_TYPE stackTop (struct stack_node* head) {
-    if(stackIsEmpty(head)) {
+STACK_ELEM_TYPE stackTop (struct stack* stack) {
+    if(stackIsEmpty(stack)) {
         printf("invalid stack to top\n");
         return 0;
     }
 
-    return head->next->data;
+    return stack->top->data;
 }
 
-STACK_ELEM_TYPE stackPop (struct stack_node* head) {
-    if(stackIsEmpty(head)) {
+STACK_ELEM_TYPE stackPop (struct stack* stack) {
+    if(stackIsEmpty(stack)) {
         printf("invalid stack to pop\n");
         return 0;
     }
 
-    struct stack_node* node = head->next;
+    struct stack_node* node = stack->top;
     STACK_ELEM_TYPE data = node->data;
-    head->next=node->next;
+    stack->top=node->next;
     free(node);
 
     return data;
 }
 
-bool stackDestroy (struct stack_node* head) {
-    if(stackIsEmpty(head)){
-        if(head==NULL){
-            printf("trying to destory nothing\n");
-            return false;
-        }
-        free(head);
-        return true;
+bool stackDestroy (struct stack* stack) {
+    if(stack==NULL){
+        printf("trying to destory nothing\n");
+        return false;
     }
 
-    struct stack_node* current = head;
-    struct stack_node* next = head->next;
+    while(!stackIsEmpty(stack))
+        stackPop(stack);
 
-    while(current!=NULL) {
-        free(current);
-        current=next;
-        next=next->next;
-    }
-
+    free(stack);
     return true;
+}
+
+void stackReverse (struct stack* stack) {
+    if (stackIsEmpty(stack)||stack->top->next==NULL)
+        return;
+
+    struct stack* tmp_stack = stackInit();
+    while(!stackIsEmpty(stack))
+        stackPush(tmp_stack,stackPop(stack));
+    
+    stack->top = tmp_stack->top;
+    free(tmp_stack);
 }
